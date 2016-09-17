@@ -119,10 +119,13 @@ export class LogConsole extends Component {
             return null;
         }
 
+        var fold=false;
+
         return (<div>
             { isLoading && <div className="loadingContainer" id={`${prefix}log-${0}`}>
                 <Progress />
             </div>}
+
 
             { !isLoading && <code
               className="block"
@@ -136,14 +139,37 @@ export class LogConsole extends Component {
                         Show complete log
                     </a>
                 </div>}
-                { lines.map((line, index) => <p key={index + 1} id={`${prefix}log-${index + 1}`}>
+                { lines.map((line, index) => {
+                    var foldStart = false;
+                    var foldEnd = false;
+                    var marker;
+                    if (line.trim().startsWith('blueoceanFold:')) {
+                        var parts = line.split(":");
+                        foldStart = parts[2].trim() === "start";
+                        foldEnd = parts[2].trim() === "end";
+                        marker = line.split(":")[1]
+                    }
+
+                    if (this.state.folding && foldStart) {
+                        fold = true;
+                    } else if (foldEnd) {
+                        fold = false;
+                        return null;
+                    }
+
+                    if(foldStart){
+                        return <div onClick={()=>{this.setState({folding:!this.state.folding})}} ><a href="#">{marker}</a></div>
+                    }
+                    return <p key={index + 1} id={`${prefix}log-${index + 1}`} style={{display:fold?'none':'block'}}>
+
                     <a
                       key={index + 1}
                       href={`#${prefix || ''}log-${index + 1}`}
                       name={`${prefix}log-${index + 1}`}
                     >{line}
                     </a>
-                </p>)}</code>
+                </p>
+                    })}</code>
             }
         </div>);
     }

@@ -190,7 +190,7 @@ exports.fetchLogsInjectStart = function fetchLogsInjectStart(url, start, onSucce
     } else {
         refetchUrl = `${url}?start=${start}`;
     }
-    return Fetch.fetch(refetchUrl)
+    return Fetch.fetch(refetchUrl, {fetchOptions:{headers:{"Accept":"text/plain"}}})
         .then(parseMoreDataHeader)
         .then(onSuccess)
         .catch(FetchFunctions.onError(onError));

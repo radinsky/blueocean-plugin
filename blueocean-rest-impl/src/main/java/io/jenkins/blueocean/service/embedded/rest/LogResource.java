@@ -1,7 +1,7 @@
 package io.jenkins.blueocean.service.embedded.rest;
 
-import com.google.common.base.Strings;
 import hudson.console.AnnotatedLargeText;
+import hudson.console.ConsoleAnnotationOutputStream;
 import io.jenkins.blueocean.commons.ServiceException;
 import org.kohsuke.stapler.AcceptHeader;
 import org.kohsuke.stapler.Header;
@@ -13,6 +13,7 @@ import org.kohsuke.stapler.framework.io.LineEndNormalizingWriter;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.charset.Charset;
 
 /**
  * @author Vivek Pandey
@@ -70,8 +71,10 @@ public class LogResource{
         }
 
         CharSpool spool = new CharSpool();
+        ConsoleAnnotationOutputStream caw = new ConsoleAnnotationOutputStream(
+            spool, new BlueConsoleAnnotator(), null, Charset.forName("UTF-8"));
 
-        long r = logText.writeLogTo(offset,spool);
+        long r = logText.writeLogTo(offset,caw);
         rsp.addHeader("X-Text-Size",String.valueOf(r));
         if(!logText.isComplete()) {
             rsp.addHeader("X-More-Data", "true");
@@ -80,6 +83,9 @@ public class LogResource{
         Writer w = createWriter(req, rsp, r - offset);
         spool.writeTo(new LineEndNormalizingWriter(w));
         w.close();
+
+
+
     }
 
     private Writer createWriter(StaplerRequest req, StaplerResponse rsp, long size) throws IOException {
