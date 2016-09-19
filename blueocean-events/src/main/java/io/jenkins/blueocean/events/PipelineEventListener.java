@@ -5,12 +5,12 @@ import hudson.Extension;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.model.listeners.RunListener;
+import io.jenkins.blueocean.rest.impl.pipeline.PipelineNodeUtil;
 import org.jenkins.pubsub.Message;
 import org.jenkins.pubsub.MessageException;
 import org.jenkins.pubsub.PubsubBus;
 import org.jenkins.pubsub.SimpleMessage;
 import org.jenkinsci.plugins.workflow.actions.BodyInvocationAction;
-import org.jenkinsci.plugins.workflow.actions.StageAction;
 import org.jenkinsci.plugins.workflow.cps.nodes.StepAtomNode;
 import org.jenkinsci.plugins.workflow.cps.nodes.StepEndNode;
 import org.jenkinsci.plugins.workflow.cps.nodes.StepNode;
@@ -24,7 +24,10 @@ import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -64,10 +67,9 @@ public class PipelineEventListener extends RunListener<Run<?,?>> {
                 }
             } else if (flowNode instanceof StepAtomNode) {
                 List<String> branch = getBranch(flowNode);
-                StageAction stageAction = flowNode.getAction(StageAction.class);
 
-                if (stageAction != null) {
-                    currentStageName = stageAction.getStageName();
+                if (PipelineNodeUtil.isStage(flowNode)) {
+                    currentStageName = flowNode.getDisplayName();
                     currentStageId = flowNode.getId();
                 }
                 publishEvent(newMessage(PipelineEventChannel.Event.pipeline_step, flowNode, branch));
