@@ -9,7 +9,7 @@
  * @param pipelineOrBranchUrl
  * @returns {boolean}
  */
-export const checkMatchingFavoriteUrls = (favoriteUrl, pipelineOrBranchUrl) => {
+const checkMatchingFavoriteUrls = (favoriteUrl, pipelineOrBranchUrl) => {
     if (favoriteUrl === pipelineOrBranchUrl) {
         return true;
     }
@@ -21,3 +21,6 @@ export const checkMatchingFavoriteUrls = (favoriteUrl, pipelineOrBranchUrl) => {
     return (favoriteUrl === `${pipelineOrBranchUrl}branches/master` ||
         favoriteUrl === `${pipelineOrBranchUrl}branches/master/`);
 };
+
+export default checkMatchingFavoriteUrls;
+q

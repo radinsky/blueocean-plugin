@@ -1,9 +1,6 @@
-/**
- * Created by cmeyers on 7/8/16.
- */
 import Immutable from 'immutable';
 
-/* eslint new-cap: [0] */
+/* eslint new-cap: [0] class-methods-use-this: [0]*/
 const { Record } = Immutable;
 
 export class User extends Record(

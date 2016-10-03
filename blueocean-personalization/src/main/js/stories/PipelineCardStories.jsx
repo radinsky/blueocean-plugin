@@ -1,11 +1,9 @@
-/**
- * Created by cmeyers on 6/28/16.
- */
+/* eslint-disable */
 import React from 'react';
 import { action, storiesOf } from '@kadira/storybook';
 import moment from 'moment';
 
-import { PipelineCard } from '../components/PipelineCard';
+import PipelineCard from '../components/PipelineCard';
 
 const style = { padding: '10px' };
 const style2 = { paddingBottom: '10px' };

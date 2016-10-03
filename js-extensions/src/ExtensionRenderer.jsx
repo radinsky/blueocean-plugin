@@ -196,6 +196,7 @@ ExtensionRenderer.defaultProps = {
 ExtensionRenderer.propTypes = {
     extensionPoint: React.PropTypes.string.isRequired,
     filter: React.PropTypes.any,
+    children: React.PropTypes.node,
     wrappingElement: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.element])
 };
 

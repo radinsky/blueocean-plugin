@@ -4,10 +4,9 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { List } from 'immutable';
 
 import { userSelector, favoritesSelector } from '../redux/FavoritesStore';
-import { actions } from '../redux/FavoritesActions';
+import actions from '../redux/FavoritesActions';
 
 /**
  * FavoritesProvider ensures that the current user's favorites
@@ -16,7 +15,7 @@ import { actions } from '../redux/FavoritesActions';
  * Components that require this data can simply wrap themselves in
  * FavoritesProvider which will ensure the store is updated correctly.
  */
-export class FavoritesProvider extends Component {
+class FavoritesProvider extends Component {
 
     componentWillMount() {
         this._initialize(this.props);
@@ -54,8 +53,7 @@ export class FavoritesProvider extends Component {
 
 FavoritesProvider.propTypes = {
     children: PropTypes.node,
-    user: PropTypes.object,
-    favorites: PropTypes.instanceOf(List),
+    user: PropTypes.shape,
     fetchUser: PropTypes.func,
     fetchFavorites: PropTypes.func,
 };

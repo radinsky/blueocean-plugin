@@ -2,7 +2,7 @@
  * Created by cmeyers on 8/12/16.
  */
 import { SseBus as sseBus } from '@jenkins-cd/blueocean-core-js';
-import { checkMatchingFavoriteUrls } from '../util/FavoriteUtils';
+import checkMatchingFavoriteUrls from '../util/FavoriteUtils';
 
 /**
  * Class that acts as a bridge between SSE and the store/actions.
@@ -21,7 +21,7 @@ class FavoritesSseListener {
         this.sseBus = sseBus;
         this.sseBus.subscribeToJob(
             jobListener,
-            (event) => this._filterJobs(event)
+            event => this._filterJobs(event)
         );
     }
 

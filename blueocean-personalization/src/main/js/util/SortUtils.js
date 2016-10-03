@@ -8,7 +8,7 @@ const statusSortOrder = [
 ];
 
 export const extractStatus = (favorite) => {
-    const latestRun = favorite && favorite.item && favorite.item.latestRun || {};
+    const latestRun = (favorite && favorite.item && favorite.item.latestRun) || {};
     return latestRun.result === 'UNKNOWN' ? latestRun.state : latestRun.result;
 };
 
@@ -64,7 +64,7 @@ export const sortByStatusByRecent = (favoriteA, favoriteB) => {
 /**
  * Applies proper sorting to favorites.
  */
-export class FavoritesSortHelper {
+export default class FavoritesSortHelper {
 
     constructor() {
         this._statusMap = {};
@@ -79,7 +79,7 @@ export class FavoritesSortHelper {
     applyStandardSort(favorites) {
         this._statusMap = {};
 
-        favorites.forEach(fav => {
+        favorites.forEach((fav) => {
             const href = fav.item._links.self.href;
             const status = extractStatus(fav);
             this._statusMap[href] = status;

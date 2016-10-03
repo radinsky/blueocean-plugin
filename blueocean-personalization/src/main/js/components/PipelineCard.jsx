@@ -3,9 +3,8 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
-import { capable, UrlBuilder } from '@jenkins-cd/blueocean-core-js';
+import { capable, UrlBuilder, RunButton, ReplayButton } from '@jenkins-cd/blueocean-core-js';
 import { Favorite, LiveStatusIndicator } from '@jenkins-cd/design-language';
-import { RunButton, ReplayButton } from '@jenkins-cd/blueocean-core-js';
 
 const stopProp = (event) => {
     event.stopPropagation();
@@ -67,7 +66,7 @@ function extractNames(pipeline, isBranch) {
  * onRunClick: callback invoked when 'Run Again' is clicked
  * onFavoriteToggle: callback invokved when favorite checkbox is toggled.
  */
-export class PipelineCard extends Component {
+class PipelineCard extends Component {
 
     static _getBackgroundClass(status) {
         return status && status.length > 0 ?
@@ -162,27 +161,27 @@ export class PipelineCard extends Component {
                 />
 
                 <span className="name">
-                    <Link to={activityUrl} onClick={(event) => stopProp(event)}>
+                    <Link to={activityUrl} onClick={event => stopProp(event)}>
                         {organization} / <span title={names.fullName}>{names.pipelineName}</span>
                     </Link>
                 </span>
 
                 { isBranch ?
                 <span className="branch">
-                    <span className="octicon octicon-git-branch"></span>
+                    <span className="octicon octicon-git-branch" />
                     <span className="branchText">{decodeURIComponent(names.branchName)}</span>
                 </span>
                 :
-                <span className="branch"></span>
+                <span className="branch" />
                 }
 
                 { commitId ?
                 <span className="commit">
-                    <span className="octicon octicon-git-commit"></span>
+                    <span className="octicon octicon-git-commit" />
                     <pre className="commitId">&#35;{commitText}</pre>
                 </span>
                 :
-                <span className="commit"></span>
+                <span className="commit" />
                 }
 
                 <span className="actions">
@@ -200,7 +199,9 @@ export class PipelineCard extends Component {
                       onNavigation={url => this._onRunDetails(url)}
                     />
 
-                    <Favorite checked={this.state.favorite} className="dark-white"
+                    <Favorite
+                      checked={this.state.favorite}
+                      className="dark-white"
                       onToggle={() => this._onFavoriteToggle()}
                     />
                 </span>
@@ -210,12 +211,13 @@ export class PipelineCard extends Component {
 }
 
 PipelineCard.propTypes = {
-    router: PropTypes.object,
-    runnable: PropTypes.object,
-    favorite: PropTypes.bool,
+    router: PropTypes.shape,
+    runnable: PropTypes.shape,
     onFavoriteToggle: PropTypes.func,
 };
 
 PipelineCard.defaultProps = {
     favorite: false,
 };
+
+export default PipelineCard;

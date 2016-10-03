@@ -10,8 +10,8 @@ import { Favorite } from '@jenkins-cd/design-language';
 import { capable } from '@jenkins-cd/blueocean-core-js';
 
 import { favoritesSelector } from '../redux/FavoritesStore';
-import { actions } from '../redux/FavoritesActions';
-import { checkMatchingFavoriteUrls } from '../util/FavoriteUtils';
+import actions from '../redux/FavoritesActions';
+import checkMatchingFavoriteUrls from '../util/FavoriteUtils';
 import FavoritesProvider from './FavoritesProvider';
 
 /**
@@ -19,7 +19,7 @@ import FavoritesProvider from './FavoritesProvider';
  * Contains all logic for rendering the current favorite status of that item
  * and toggling favorited state on the server.
  */
-export class FavoritePipeline extends Component {
+class FavoritePipeline extends Component {
 
     constructor(props) {
         super(props);
@@ -37,18 +37,6 @@ export class FavoritePipeline extends Component {
         if (this.props.favorites !== nextProps.favorites) {
             this._updateState(nextProps);
         }
-    }
-
-    _findMatchingFavorite(pipeline, favorites) {
-        if (!pipeline || !favorites) {
-            return null;
-        }
-
-        return favorites.find((fav) => {
-            const favUrl = fav.item._links.self.href;
-            const pipelineUrl = pipeline._links.self.href;
-            return checkMatchingFavoriteUrls(favUrl, pipelineUrl);
-        });
     }
 
     _updateState(props) {
@@ -81,7 +69,9 @@ export class FavoritePipeline extends Component {
 
         return (
             <FavoritesProvider store={this.props.store}>
-                <Favorite checked={this.state.favorite} className={this.props.className}
+                <Favorite
+                  checked={this.state.favorite}
+                  className={this.props.className}
                   onToggle={() => this._onFavoriteToggle()}
                 />
             </FavoritesProvider>
@@ -89,12 +79,24 @@ export class FavoritePipeline extends Component {
     }
 }
 
+FavoritePipeline._findMatchingFavorite = function _findMatchingFavorite(pipeline, favorites) {
+    if (!pipeline || !favorites) {
+        return null;
+    }
+
+    return favorites.find((fav) => {
+        const favUrl = fav.item._links.self.href;
+        const pipelineUrl = pipeline._links.self.href;
+        return checkMatchingFavoriteUrls(favUrl, pipelineUrl);
+    });
+};
+
 FavoritePipeline.propTypes = {
     className: PropTypes.string,
-    pipeline: PropTypes.object,
+    pipeline: PropTypes.shape,
     favorites: PropTypes.instanceOf(List),
     toggleFavorite: PropTypes.func,
-    store: PropTypes.object,
+    store: PropTypes.shape,
 };
 
 FavoritePipeline.defaultProps = {
@@ -103,7 +105,7 @@ FavoritePipeline.defaultProps = {
 
 const selectors = createSelector(
     [favoritesSelector],
-    (favorites) => ({ favorites })
+    favorites => ({ favorites })
 );
 
 export default connect(selectors, actions)(FavoritePipeline);

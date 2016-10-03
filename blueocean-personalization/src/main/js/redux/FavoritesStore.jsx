@@ -7,8 +7,8 @@ import Immutable from 'immutable';
 import { createSelector } from 'reselect';
 
 import { AnonUser, User } from '../model/User';
-import { FavoritesSortHelper } from '../util/SortUtils';
-import { checkMatchingFavoriteUrls } from '../util/FavoriteUtils';
+import FavoritesSortHelper from '../util/SortUtils';
+import checkMatchingFavoriteUrls from '../util/FavoriteUtils';
 
 /* eslint new-cap: [0] */
 const { Record, List } = Immutable;
@@ -63,7 +63,7 @@ const actionHandlers = {
         } else {
             const toggledBranchHref = branch._links.self.href;
             // filter the list so that only favorites which didn't match the branch's href are returned
-            updatedList = favoritesList.filter(fav => {
+            updatedList = favoritesList.filter((fav) => {
                 const favoritedBranch = fav.item;
                 return !checkMatchingFavoriteUrls(
                     favoritedBranch._links.self.href,
