@@ -24,11 +24,9 @@ import {
     buildRunDetailsUrl,
 } from '../util/UrlUtils';
 
-import { RunDetailsHeader } from './RunDetailsHeader';
+import RunDetailsHeader from './RunDetailsHeader';
 import { RunRecord } from './records';
 import PageLoading from './PageLoading';
-
-const { func, object, any, string } = PropTypes;
 
 class RunDetails extends Component {
 
@@ -37,7 +35,7 @@ class RunDetails extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (!this._didRunChange(this.props.params, nextProps.params)) {
+        if (!this.didRunChange(this.props.params, nextProps.params)) {
             return;
         }
 
@@ -59,13 +57,6 @@ class RunDetails extends Component {
                 this.opener = props.previous;
             }
         }
-    }
-
-    _didRunChange(oldParams, newParams) {
-        return oldParams.organization !== newParams.organization ||
-                oldParams.pipeline !== newParams.pipeline ||
-                oldParams.branch !== newParams.branch ||
-                oldParams.runId !== newParams.runId;
     }
 
     navigateToOrganization() {
@@ -184,23 +175,29 @@ class RunDetails extends Component {
     }
 }
 
+RunDetails.didRunChange = function didRunChange(oldParams, newParams) {
+    return oldParams.organization !== newParams.organization ||
+      oldParams.pipeline !== newParams.pipeline ||
+      oldParams.branch !== newParams.branch ||
+      oldParams.runId !== newParams.runId;
+};
+
+const { func, shape } = PropTypes;
+
 RunDetails.contextTypes = {
-    config: object.isRequired,
-    params: object,
-    router: object.isRequired, // From react-router
-    location: object.isRequired, // From react-router
-    pipeline: object,
+    config: shape.isRequired,
+    params: shape,
+    router: shape.isRequired, // From react-router
+    location: shape.isRequired, // From react-router
+    pipeline: shape,
 };
 
 RunDetails.propTypes = {
     children: PropTypes.node,
-    params: any,
-    pipeline: object,
-    run: object,
-    isMultiBranch: any,
-    fetchRun: func,
-    getPipeline: func,
-    previous: string,
+    params: shape,
+    pipeline: shape,
+    run: shape,
+    isMultiBranch: shape,
     setTitle: func,
 };
 

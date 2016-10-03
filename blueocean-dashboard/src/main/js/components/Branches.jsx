@@ -1,14 +1,13 @@
 import React, { Component, PropTypes } from 'react';
-import { CommitHash, ReadableDate } from '@jenkins-cd/design-language';
-import { LiveStatusIndicator, WeatherIcon } from '@jenkins-cd/design-language';
+import { CommitHash, ReadableDate, LiveStatusIndicator, WeatherIcon } from '@jenkins-cd/design-language';
 import { RunButton } from '@jenkins-cd/blueocean-core-js';
 import Extensions from '@jenkins-cd/js-extensions';
 
 import { buildRunDetailsUrl } from '../util/UrlUtils';
 
-const { object } = PropTypes;
+const { shape } = PropTypes;
 
-const stopProp = (event) => event.stopPropagation();
+const stopProp = event => event.stopPropagation();
 
 export default class Branches extends Component {
     constructor(props) {
@@ -56,8 +55,10 @@ export default class Branches extends Component {
             <tr key={cleanBranchName} onClick={open} id={`${cleanBranchName}-${id}`} >
                 <td><WeatherIcon score={weatherScore} /></td>
                 <td onClick={open}>
-                    <LiveStatusIndicator result={result === 'UNKNOWN' ? state : result}
-                      startTime={startTime} estimatedDuration={estimatedDurationInMillis}
+                    <LiveStatusIndicator
+                      result={result === 'UNKNOWN' ? state : result}
+                      startTime={startTime}
+                      estimatedDuration={estimatedDurationInMillis}
                     />
                 </td>
                 <td>{cleanBranchName}</td>
@@ -65,7 +66,7 @@ export default class Branches extends Component {
                 <td>{msg || '-'}</td>
                 <td><ReadableDate date={endTime} liveUpdate /></td>
                 { /* suppress all click events from extension points */ }
-                <td className="actions" onClick={(event) => stopProp(event)}>
+                <td className="actions" onClick={event => stopProp(event)}>
                     <RunButton
                       className="icon-button"
                       runnable={data}
@@ -84,12 +85,12 @@ export default class Branches extends Component {
 }
 
 Branches.propTypes = {
-    data: object.isRequired,
+    data: shape.isRequired,
 };
 
 Branches.contextTypes = {
-    store: object,
-    pipeline: object,
-    router: object.isRequired, // From react-router
-    location: object,
+    store: shape,
+    pipeline: shape,
+    router: shape.isRequired, // From react-router
+    location: shape,
 };

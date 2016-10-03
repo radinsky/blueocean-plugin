@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react';
 import { storiesOf } from '@kadira/storybook';
 
@@ -38,13 +39,11 @@ storiesOf('Blue Icon', module)
         {
             Object.keys(shapes).map((shape, index) => <div
               key={index}
-              style={
-                  {
-                      display: 'inline',
-                      float: 'left',
-                      padding: '5px',
-                  }
-              }
+              style={{
+                  display: 'inline',
+                  float: 'left',
+                  padding: '5px',
+              }}
             >
                 <Icon icon={shape} />
                 <div>{shape}</div>

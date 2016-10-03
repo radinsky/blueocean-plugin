@@ -5,7 +5,7 @@ import Extensions from '@jenkins-cd/js-extensions';
 
 import { buildRunDetailsUrl } from '../util/UrlUtils';
 
-const { object } = PropTypes;
+const { shape } = PropTypes;
 
 export default class PullRequest extends Component {
     render() {
@@ -52,7 +52,9 @@ export default class PullRequest extends Component {
 
         return (<tr key={id} onClick={open} id={`${name}-${id}`} >
             <td>
-                <LiveStatusIndicator result={result} startTime={startTime}
+                <LiveStatusIndicator
+                  result={result}
+                  startTime={startTime}
                   estimatedDuration={estimatedDurationInMillis}
                 />
             </td>
@@ -74,11 +76,11 @@ export default class PullRequest extends Component {
 }
 
 PullRequest.propTypes = {
-    pr: object,
+    pr: shape,
 };
 
 PullRequest.contextTypes = {
-    pipeline: object,
-    router: object.isRequired, // From react-router
-    location: object,
+    pipeline: shape,
+    router: shape.isRequired, // From react-router
+    location: shape,
 };

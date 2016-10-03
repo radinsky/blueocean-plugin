@@ -13,7 +13,7 @@ import PageLoading from './PageLoading';
 import { MULTIBRANCH_PIPELINE } from '../Capabilities';
 import { capabilityStore } from './Capability';
 
-const { object, array, func, string, bool } = PropTypes;
+const { shape, arrayOf, func, string, bool } = PropTypes;
 
 const EmptyState = ({ repoName, pipeline, showRunButton, onNavigation }) => (
     <main>
@@ -42,12 +42,12 @@ const EmptyState = ({ repoName, pipeline, showRunButton, onNavigation }) => (
 
 EmptyState.propTypes = {
     repoName: string,
-    pipeline: object,
+    pipeline: shape,
     showRunButton: bool,
     onNavigation: func,
 };
 
-export class Activity extends Component {
+class Activity extends Component {
     componentWillMount() {
         if (this.context.config && this.context.params) {
             const {
@@ -133,13 +133,14 @@ export class Activity extends Component {
                             }
 
                             return (
-                                <Runs {...{
-                                    key: index,
-                                    run,
-                                    pipeline,
-                                    changeset: latestRecord,
-                                    result: new RunRecord(run),
-                                }}
+                                <Runs
+                                  {...{
+                                      key: index,
+                                      changeset: latestRecord,
+                                      result: new RunRecord(run),
+                                      run,
+                                      pipeline,
+                                  }}
                                 />
                             );
                         })
@@ -157,20 +158,20 @@ export class Activity extends Component {
 }
 
 Activity.contextTypes = {
-    params: object.isRequired,
-    location: object.isRequired,
-    pipeline: object,
-    config: object.isRequired,
-    router: object.isRequired,
+    params: shape.isRequired,
+    location: shape.isRequired,
+    pipeline: shape,
+    config: shape.isRequired,
+    router: shape.isRequired,
 };
 
 Activity.propTypes = {
-    runs: array,
-    pipeline: object,
-    capabilities: object,
+    runs: arrayOf,
+    pipeline: shape,
+    capabilities: shape,
     fetchRuns: func,
 };
 
-const selectors = createSelector([currentRunsSelector], (runs) => ({ runs }));
+const selectors = createSelector([currentRunsSelector], runs => ({ runs }));
 
 export default connect(selectors, actions)(capabilityStore(props => props.pipeline._class)(Activity));

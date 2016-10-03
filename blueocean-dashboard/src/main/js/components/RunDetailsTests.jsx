@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import { EmptyStateView } from '@jenkins-cd/design-language';
+import Extensions, { dataType } from '@jenkins-cd/js-extensions';
 import { actions as selectorActions, testResults as testResultsSelector,
     connect, createSelector } from '../redux';
-import Extensions, { dataType } from '@jenkins-cd/js-extensions';
 import PageLoading from './PageLoading';
 
 const EmptyState = () => (
@@ -17,7 +17,7 @@ const EmptyState = () => (
 /**
  * Displays a list of tests from the supplied build run property.
  */
-export class RunDetailsTests extends Component {
+class RunDetailsTests extends Component {
     componentWillMount() {
         this.props.fetchTestResults(
             this.props.result
@@ -26,14 +26,6 @@ export class RunDetailsTests extends Component {
 
     componentWillUnmount() {
         this.props.resetTestDetails();
-    }
-
-    renderEmptyState() {
-        return (
-            <EmptyStateView tightSpacing>
-                <p>There are no tests for this pipeline run.</p>
-            </EmptyStateView>
-        );
     }
 
     render() {
@@ -52,7 +44,7 @@ export class RunDetailsTests extends Component {
 
         return (<div className="test-results-container">
             <div className="test=result-summary" style={{ display: 'none' }}>
-                <div className={`test-result-bar ${percentComplete}%`}></div>
+                <div className={`test-result-bar ${percentComplete}%`} />
                 <div className="test-result-passed">Passed {testResults.passCount}</div>
                 <div className="test-result-failed">Failed {testResults.failCount}</div>
                 <div className="test-result-skipped">Skipped {testResults.skipCount}</div>
@@ -63,22 +55,25 @@ export class RunDetailsTests extends Component {
         </div>);
     }
 }
-
+RunDetailsTests.renderEmptyState = function renderEmptyState() {
+    return (
+      <EmptyStateView tightSpacing>
+          <p>There are no tests for this pipeline run.</p>
+      </EmptyStateView>
+    );
+};
 RunDetailsTests.propTypes = {
-    params: PropTypes.object,
-    isMultiBranch: PropTypes.bool,
-    result: PropTypes.object,
-    testResults: PropTypes.object,
+    result: PropTypes.shape,
+    testResults: PropTypes.shape,
     resetTestDetails: PropTypes.func,
     fetchTestResults: PropTypes.func,
-    fetchTypeInfo: PropTypes.func,
 };
 
 RunDetailsTests.contextTypes = {
-    config: PropTypes.object.isRequired,
+    config: PropTypes.shape.isRequired,
 };
 
 const selectors = createSelector([testResultsSelector],
-    (testResults) => ({ testResults }));
+    testResults => ({ testResults }));
 
 export default connect(selectors, selectorActions)(RunDetailsTests);

@@ -13,7 +13,7 @@ export default class Nodes extends Component {
             nodesBaseUrl,
         } = nodeInformation;
         return (<div>
-            {
+          {
               model.map((item, index) =>
                 <Step
                   key={`${index}${item.id}`}
@@ -27,5 +27,5 @@ export default class Nodes extends Component {
 }
 
 Nodes.propTypes = {
-    nodeInformation: PropTypes.object.isRequired,
+    nodeInformation: PropTypes.shape.isRequired,
 };

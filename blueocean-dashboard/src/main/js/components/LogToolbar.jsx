@@ -20,18 +20,20 @@ export default class LogToolbar extends Component {
                 {title}
             </div>
             <div className="log-header__section download-log-button">
-                <a {...{
-                    title: 'Display the log in new window',
-                    target: '_blank',
-                    href: logUrl,
-                }}
+                <a
+                  {...{
+                      title: 'Display the log in new window',
+                      target: '_blank',
+                      href: logUrl,
+                  }}
                 >
                     <Icon size={24} {...{ style, icon: 'launch' }} />
                 </a>
-                <a {...{
-                    title: 'Download the log file',
-                    href: `${logUrl}&download=true`,
-                }}
+                <a
+                  {...{
+                      title: 'Download the log file',
+                      href: `${logUrl}&download=true`,
+                  }}
                 >
                     <Icon size={24} {...{ style, icon: 'file_download' }} />
                 </a>
@@ -41,8 +43,6 @@ export default class LogToolbar extends Component {
 }
 
 LogToolbar.propTypes = {
-    data: string,
     title: string,
-    fileName: string,
     url: string.isRequired,
 };

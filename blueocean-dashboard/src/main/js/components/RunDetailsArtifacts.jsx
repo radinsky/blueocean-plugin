@@ -2,20 +2,12 @@ import React, { Component, PropTypes } from 'react';
 import { EmptyStateView, FileSize, Table } from '@jenkins-cd/design-language';
 import { Icon } from 'react-material-icons-blue';
 
-const { object } = PropTypes;
+const { shape } = PropTypes;
 
 /**
  * Displays a list of artifacts from the supplied build run property.
  */
 export default class RunDetailsArtifacts extends Component {
-    renderEmptyState() {
-        return (
-            <EmptyStateView tightSpacing>
-                <p>There are no artifacts for this pipeline run.</p>
-            </EmptyStateView>
-        );
-    }
-
     render() {
         const { result } = this.props;
 
@@ -46,7 +38,7 @@ export default class RunDetailsArtifacts extends Component {
                             <FileSize bytes={artifact.size} />
                         </td>
                         <td className="download">
-                            <a target="_blank" title="Download the artifact" href={artifact.url}>
+                            <a rel="noopener noreferrer" target="_blank" title="Download the artifact" href={artifact.url}>
                                 <Icon style={style} icon="file_download" />
                             </a>
                         </td>
@@ -56,7 +48,15 @@ export default class RunDetailsArtifacts extends Component {
         );
     }
 }
+RunDetailsArtifacts.renderEmptyState = function renderEmptyState() {
+    return (
+      <EmptyStateView tightSpacing>
+          <p>There are no artifacts for this pipeline run.</p>
+      </EmptyStateView>
+    );
+};
 
 RunDetailsArtifacts.propTypes = {
-    result: object,
+    result: shape,
 };
+

@@ -2,7 +2,7 @@
  * Build a root-relative URL to the organization's pipeline list screen.
  * @param organization
  */
-export const buildOrganizationUrl = (organization) =>
+export const buildOrganizationUrl = organization =>
     `/organizations/${encodeURIComponent(organization)}`;
 
 /**
@@ -38,7 +38,7 @@ export const buildRunDetailsUrl = (organization, pipeline, branch, runId, tabNam
  * helper to clean the path replace(/%2F/g, '%252F')
  * @param input
  */
-export const uriString = (input) => encodeURIComponent(input).replace(/%2F/g, '%252F');
+export const uriString = input => encodeURIComponent(input).replace(/%2F/g, '%252F');
 
 // general fetchAllTrigger
 export const fetchAllSuffix = '?start=0';
@@ -185,6 +185,7 @@ export function getRestUrl({ organization, pipeline, branch, runId }) {
     const organizationName = organization ||
         (typeof pipeline === 'object' ? pipeline.organization : '');
     const jenkinsUrl = require('../config').getJenkinsRootURL();
+
     let url = `${jenkinsUrl}/blue/rest/organizations/${encodeURIComponent(organizationName)}`;
     if (pipelineName) {
         // pipelineName might include a folder path, don't encode it
@@ -206,7 +207,7 @@ export function getRestUrl({ organization, pipeline, branch, runId }) {
  */
 export function buildUrl(...args) {
     let url = '';
-    for (let i = 0; i < args.length; i++) {
+    for (let i = 0; i < args.length; i += 1) {
         if (i > 0) {
             url += '/';
         }

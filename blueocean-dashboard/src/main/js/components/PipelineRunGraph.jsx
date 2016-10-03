@@ -1,9 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { PipelineGraph } from '@jenkins-cd/design-language';
 
-const { array, any, func, object, string } = PropTypes;
-
-
 function badNode(jenkinsNode) {
     // eslint-disable-next-line
     console.error('Malformed / missing Jenkins run node:', jenkinsNode);
@@ -65,10 +62,10 @@ export function convertJenkinsNodeGraph(jenkinsGraph, isCompleted) {
     const results = [];
     const originalNodeForId = {};
     const convertedNodeForId = {};
-    let firstNode = undefined;
+    let firstNode;
 
     // Convert the basic details of nodes, and index them by id
-    jenkinsGraph.forEach(jenkinsNode => {
+    jenkinsGraph.forEach((jenkinsNode) => {
         const convertedNode = convertJenkinsNodeDetails(jenkinsNode, isCompleted);
         const { id } = convertedNode;
 
@@ -179,12 +176,11 @@ export default class PipelineRunGraph extends Component {
     }
 }
 
+const { arrayOf, func, shape } = PropTypes;
+
 PipelineRunGraph.propTypes = {
-    pipelineName: string,
-    branchName: string,
-    run: object,
-    nodes: array,
-    node: any,
-    selectedStage: object,
+    run: shape,
+    nodes: arrayOf,
+    selectedStage: shape,
     callback: func,
 };

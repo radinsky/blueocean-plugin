@@ -11,7 +11,7 @@ import {
 import PageLoading from './PageLoading';
 import { pipelineBranchesUnsupported } from './PipelinePage';
 
-const { func, object, array, string } = PropTypes;
+const { func, object, arrayOf, string } = PropTypes;
 
 const EmptyState = ({ repoName }) => (
     <main>
@@ -37,7 +37,7 @@ const NotSupported = () => (
             Validated pull request builds only work with the <i>Multibranch Pipeline</i> job type.
             This is just one of the many reasons to switch to Jenkins Pipeline.
             </p>
-            <a href="https://jenkins.io/doc/book/pipeline-as-code/" target="_blank">Learn more</a>
+            <a rel="noopener noreferrer" href="https://jenkins.io/doc/book/pipeline-as-code/" target="_blank">Learn more</a>
         </EmptyStateView>
     </main>
 );
@@ -46,7 +46,7 @@ EmptyState.propTypes = {
     repoName: string,
 };
 
-export class PullRequests extends Component {
+class PullRequests extends Component {
     componentWillMount() {
         if (this.context.pipeline && this.context.params && !pipelineBranchesUnsupported(this.context.pipeline)) {
             this.props.fetchPullRequests({
@@ -120,11 +120,11 @@ PullRequests.contextTypes = {
 };
 
 PullRequests.propTypes = {
-    pullRequests: array,
+    pullRequests: arrayOf,
     clearPRData: func,
     fetchPullRequests: func,
 };
 
-const selectors = createSelector([pullRequestSelector], (pullRequests) => ({ pullRequests }));
+const selectors = createSelector([pullRequestSelector], pullRequests => ({ pullRequests }));
 
 export default connect(selectors, actions)(PullRequests);

@@ -5,7 +5,7 @@
  * @param mergedConfig
  */
 
-export function calculateNode(props, nextProps, mergedConfig) {
+export default function calculateNode(props, nextProps, mergedConfig) {
     const refetch = nextProps.result.state === 'RUNNING';
     // case the param is different from the one we currently in
     if (nextProps.params.node !== props.params.node) {

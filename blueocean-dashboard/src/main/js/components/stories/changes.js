@@ -9,7 +9,7 @@ import {
     Progress,
     TabLink,
 } from '@jenkins-cd/design-language';
-import { RunDetailsHeader } from '../RunDetailsHeader';
+import RunDetailsHeader from '../RunDetailsHeader';
 
 import { RunRecord } from '../records';
 

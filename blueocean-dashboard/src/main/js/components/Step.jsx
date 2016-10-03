@@ -4,8 +4,6 @@ import { calculateFetchAll, calculateLogUrl } from '../util/UrlUtils';
 
 import LogConsole from './LogConsole';
 
-const { object, func, string, bool } = PropTypes;
-
 export default class Node extends Component {
     constructor(props) {
         super(props);
@@ -36,7 +34,7 @@ export default class Node extends Component {
         const node = this.expandAnchor(nextProps);
         const fetchAll = node.fetchAll;
         const mergedConfig = { ...config, node, nodesBaseUrl, fetchAll };
-        if (logs && logs !== this.props.logs || fetchAll) {
+        if ((logs && logs !== this.props.logs) || fetchAll) {
             const key = calculateLogUrl(mergedConfig);
             const log = logs ? logs[key] : null;
             if (log && log !== null) {
@@ -145,7 +143,8 @@ export default class Node extends Component {
         }
 
         return (<div className={logConsoleClass}>
-            <ResultItem {...{
+          <ResultItem
+            {...{
                 durationInMillis,
                 key: id,
                 result: runResult,
@@ -154,18 +153,18 @@ export default class Node extends Component {
                 onCollapse: removeFocus,
                 onExpand: getLogForNode,
             }}
-            >
-                {children}
-            </ResultItem>
-      </div>);
+          >
+            {children}
+          </ResultItem>
+        </div>);
     }
 }
+const { shape, func, string, bool } = PropTypes;
 
 Node.propTypes = {
-    node: object.isRequired,
+    node: shape.isRequired,
     followAlong: bool,
-    logs: object,
-    location: object,
+    logs: shape,
     fetchLog: func,
     nodesBaseUrl: string,
 };

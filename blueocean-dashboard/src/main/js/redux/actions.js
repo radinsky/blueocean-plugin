@@ -1,11 +1,12 @@
 import keymirror from 'keymirror';
+import { Fetch, FetchFunctions } from '@jenkins-cd/blueocean-core-js';
 import { fetch as smartFetch, paginate, applyFetchMarkers } from '../util/smart-fetch';
 import { State } from '../components/records';
 import UrlConfig from '../config';
 import { getNodesInformation } from '../util/logDisplayHelper';
 import { calculateStepsBaseUrl, calculateLogUrl, calculateNodeBaseUrl, paginateUrl, getRestUrl } from '../util/UrlUtils';
 import findAndUpdate from '../util/find-and-update';
-import { Fetch, FetchFunctions } from '@jenkins-cd/blueocean-core-js';
+
 const debugLog = require('debug')('blueocean-actions-js:debug');
 
 /**
@@ -106,7 +107,7 @@ export const actionHandlers = {
         return state.set('pipeline', payload);
     },
     [ACTION_TYPES.SET_CURRENT_RUN_DATA](state, { payload }): State {
-        return state.set('currentRuns', payload.map((run) => _mapQueueToPsuedoRun(run)));
+        return state.set('currentRuns', payload.map(run => _mapQueueToPsuedoRun(run)));
     },
     [ACTION_TYPES.SET_CURRENT_RUN](state, { payload }): State {
         return state.set('currentRun', payload);
@@ -160,8 +161,8 @@ export const actionHandlers = {
     [ACTION_TYPES.REMOVE_LOG](state, { key }): State {
         const logs = { ...state.logs } || {};
         Object.keys(logs)
-            .filter((item) => item.indexOf(key) !== -1)
-            .map((item) => delete logs[item]);
+            .filter(item => item.indexOf(key) !== -1)
+            .map(item => delete logs[item]);
         return state.set('logs', logs);
     },
     [ACTION_TYPES.FIND_AND_UPDATE](state, { payload }): State {
@@ -244,7 +245,7 @@ function clone(json) {
 export const actions = {
     clearPipelinesData: () => ({ type: ACTION_TYPES.CLEAR_PIPELINES_DATA }),
     clearPipelineData() {
-        return (dispatch) => dispatch({ type: ACTION_TYPES.CLEAR_PIPELINE_DATA });
+        return dispatch => dispatch({ type: ACTION_TYPES.CLEAR_PIPELINE_DATA });
     },
 
     /**
@@ -259,7 +260,7 @@ export const actions = {
             const url =
                 `${UrlConfig.getRestRoot()}/search/?q=type:pipeline;excludedFromFlattening:jenkins.branch.MultiBranchProject,hudson.matrix.MatrixProject&filter=no-folders`;
             return paginate({ urlProvider: paginateUrl(url) })
-            .then(data => {
+            .then((data) => {
                 dispatch({
                     type: ACTION_TYPES.SET_ALL_PIPELINES_DATA,
                     payload: data,
@@ -269,13 +270,13 @@ export const actions = {
     },
 
     clearBranchData() {
-        return (dispatch) => dispatch({
+        return dispatch => dispatch({
             type: ACTION_TYPES.CLEAR_CURRENT_BRANCHES_DATA,
         });
     },
 
     clearPRData() {
-        return (dispatch) => dispatch({
+        return dispatch => dispatch({
             type: ACTION_TYPES.CLEAR_CURRENT_PULL_REQUEST_DATA,
         });
     },
@@ -286,7 +287,7 @@ export const actions = {
             const url =
                 `${UrlConfig.getRestRoot()}/search/?q=type:pipeline;organization:${encodeURIComponent(organizationName)};excludedFromFlattening:jenkins.branch.MultiBranchProject,hudson.matrix.MatrixProject&filter=no-folders`;
             return paginate({ urlProvider: paginateUrl(url) })
-            .then(data => {
+            .then((data) => {
                 dispatch({
                     type: ACTION_TYPES.SET_ORG_PIPELINES_DATA,
                     payload: data,
@@ -300,7 +301,7 @@ export const actions = {
             const url =
                 `${UrlConfig.getRestRoot()}/organizations/${encodeURIComponent(organizationName)}/pipelines/${pipelineName}/branches/?filter=origin`;
             return paginate({ urlProvider: paginateUrl(url) })
-            .then(data => {
+            .then((data) => {
                 dispatch({
                     id: pipelineName,
                     type: ACTION_TYPES.SET_CURRENT_BRANCHES_DATA,
@@ -315,7 +316,7 @@ export const actions = {
             const url =
                 `${UrlConfig.getRestRoot()}/organizations/${encodeURIComponent(organizationName)}/pipelines/${pipelineName}/branches/?filter=pull-requests`;
             return paginate({ urlProvider: paginateUrl(url) })
-            .then(data => {
+            .then((data) => {
                 dispatch({
                     type: ACTION_TYPES.SET_CURRENT_PULL_REQUEST_DATA,
                     payload: data,
@@ -328,7 +329,7 @@ export const actions = {
      * Fetch a specific pipeline, sets as current
      */
     fetchPipeline(organizationName, pipelineName) {
-        return (dispatch) =>
+        return dispatch =>
             smartFetch(
                 getRestUrl({ organization: organizationName, pipeline: pipelineName }),
                 data => dispatch({
@@ -342,7 +343,7 @@ export const actions = {
     processJobQueuedEvent(event) {
         return (dispatch, getState) => {
             const id = event.blueocean_job_pipeline_name;
-            const runsByJobName = getState().adminStore && getState().adminStore.runs || {};
+            const runsByJobName = (getState().adminStore && getState().adminStore.runs) || {};
             const eventJobRuns = runsByJobName[id];
 
             // Only interested in the event if we have already loaded the runs for that job.
@@ -353,7 +354,7 @@ export const actions = {
                 // that this could still fail with a reload if the runs have not loaded and
                 // we don't have a matching queued item with the same runId
                 let nextId = 0;
-                for (let i = 0; i < eventJobRuns.length; i++) {
+                for (let i = 0; i < eventJobRuns.length; i += 1) {
                     const run = eventJobRuns[i];
                     if (event.job_ismultibranch
                         && event.blueocean_job_branch_name !== run.pipeline) {
@@ -420,7 +421,7 @@ export const actions = {
             // only proceed with removal if the job was cancelled
             if (event.job_run_status === 'CANCELLED') {
                 const id = event.blueocean_job_pipeline_name;
-                const runsByJobName = getState().adminStore && getState().adminStore.runs || {};
+                const runsByJobName = (getState().adminStore && getState().adminStore.runs) || {};
                 const eventJobRuns = runsByJobName[id];
 
                 // Only interested in the event if we have already loaded the runs for that job.
@@ -428,7 +429,7 @@ export const actions = {
                     const newRuns = clone(eventJobRuns);
                     applyFetchMarkers(newRuns, eventJobRuns);
 
-                    const queueItemToRemove = newRuns.find((run) => (
+                    const queueItemToRemove = newRuns.find(run => (
                         run.job_run_queueId === event.job_run_queueId
                     ));
 
@@ -456,7 +457,7 @@ export const actions = {
         return (dispatch, getState) => {
             debugLog('updateRunState:', event);
             let found = false;
-            findAndUpdate(getState().adminStore, o => {
+            findAndUpdate(getState().adminStore, (o) => {
                 if (!found && matchesEvent(event, o)) {
                     debugLog('found:', o);
                     found = true;
@@ -466,10 +467,10 @@ export const actions = {
                 debugLog('Calling dispatch for event ', event);
                 const runUrl = `${UrlConfig.getJenkinsRootURL()}${event.blueocean_job_rest_url}runs/${event.jenkins_object_id}`;
                 smartFetch(runUrl)
-                .then(data => {
+                .then((data) => {
                     if (data.$pending) return;
                     debugLog('Updating run: ', data);
-                    dispatchFindAndUpdate(dispatch, run => {
+                    dispatchFindAndUpdate(dispatch, (run) => {
                         if (matchesEvent(event, run)) {
                             if (event.jenkins_event !== 'job_run_ended') {
                                 return { ...data,
@@ -489,9 +490,9 @@ export const actions = {
                         return undefined;
                     });
                 })
-                .catch(err => {
+                .catch((err) => {
                     // Just update the run state for fetch failures (this was the existing behavior, not sure why, really)
-                    dispatchFindAndUpdate(dispatch, o => {
+                    dispatchFindAndUpdate(dispatch, (o) => {
                         if (o.job_run_queueId === event.job_run_queueId) {
                             return { ...o, state: event.jenkins_event === 'job_run_ended' ? 'FINISHED' : 'RUNNING' };
                         }
@@ -507,7 +508,7 @@ export const actions = {
         return (dispatch, getState) => {
             debugLog('updateBranchState:', event);
             let found = false;
-            findAndUpdate(getState().adminStore, o => {
+            findAndUpdate(getState().adminStore, (o) => {
                 debugLog('updateBranchState:', o);
                 if (!found && o && o.latestRun && (o.fullName === event.job_name)) {
                     debugLog('found:', o);
@@ -523,7 +524,7 @@ export const actions = {
                         return;
                     }
                     // apply the new data to the store
-                    dispatchFindAndUpdate(dispatch, branch => {
+                    dispatchFindAndUpdate(dispatch, (branch) => {
                         if (branch && branch.latestRun && (branch.fullName === event.job_name)) {
                             if (branchData.latestRun.state !== 'RUNNING') {
                                 return { ...branchData,
@@ -561,7 +562,7 @@ export const actions = {
         return (dispatch, getState) => paginate({
             urlProvider: paginateUrl(
                 `${UrlConfig.getRestRoot()}/organizations/${organization}/pipelines/${pipeline}/activities/`),
-            onData: data => {
+            onData: (data) => {
                 const runs = getState().adminStore && getState().adminStore.runs ? getState().adminStore.runs[pipeline] : [];
                 dispatch({
                     id: pipeline,
@@ -577,7 +578,7 @@ export const actions = {
             const runs = getState().adminStore && getState().adminStore.runs ? getState().adminStore.runs[config.pipeline] : [];
             smartFetch(
                 getRestUrl(config),
-                data => {
+                (data) => {
                     if (data.$failed) { // might be a queued item...
                         const found = runs.filter(r => r.id === config.runId)[0];
                         if (found) {
@@ -616,19 +617,17 @@ export const actions = {
                 let nodeModel;
                 let node;
                 if (!config.node) {
-                    const focused = information.model.filter((item) => item.isFocused)[0];
+                    const focused = information.model.filter(item => item.isFocused)[0];
                     if (focused) {
                         nodeModel = focused;
+                    } else if (config.isPipelineQueued) {
+                        nodeModel = (information.model[0]);
                     } else {
-                        if (config.isPipelineQueued) {
-                            nodeModel = (information.model[0]);
-                        } else {
-                            nodeModel = (information.model[information.model.length - 1]);
-                        }
+                        nodeModel = (information.model[information.model.length - 1]);
                     }
                     node = nodeModel ? nodeModel.id : null;
                 } else {
-                    nodeModel = information.model.filter((item) => item.id === config.node)[0];
+                    nodeModel = information.model.filter(item => item.id === config.node)[0];
                     node = config.node;
                 }
                 // console.log('ACTION_TYPES.SET_NODE', nodeModel);
@@ -667,7 +666,7 @@ export const actions = {
             if (!data || !data[nodesBaseUrl] || config.refetch) {
                 return actions.fetchNodes(config);
             }
-            const node = data[nodesBaseUrl].model.filter((item) => item.id === config.node)[0];
+            const node = data[nodesBaseUrl].model.filter(item => item.id === config.node)[0];
             return dispatch({
                 type: ACTION_TYPES.SET_NODE,
                 payload: node,
@@ -676,7 +675,7 @@ export const actions = {
     },
 
     cleanNodePointer() {
-        return (dispatch) => dispatch({
+        return dispatch => dispatch({
             type: ACTION_TYPES.SET_NODE,
             payload: null,
         });
@@ -713,7 +712,7 @@ export const actions = {
      * @returns {function(*)}
      */
     removeStep(id) {
-        return (dispatch) => dispatch({
+        return dispatch => dispatch({
             type: ACTION_TYPES.REMOVE_STEP,
             stepId: id,
         });
@@ -725,7 +724,7 @@ export const actions = {
      * @returns {function(*)}
      */
     removeLogs(id) {
-        return (dispatch) => dispatch({
+        return dispatch => dispatch({
             type: ACTION_TYPES.REMOVE_LOG,
             key: id,
         });
@@ -742,13 +741,13 @@ export const actions = {
                 config.fetchAll ||
                 !data || !data[logUrl] ||
                 config.newStart > 0 ||
-                (data && data[logUrl] && data[logUrl].newStart > 0 || !data[logUrl].logArray)
+                ((data && data[logUrl] && data[logUrl].newStart > 0) || !data[logUrl].logArray)
             ) {
                 return exports.fetchLogsInjectStart(
                     logUrl,
                     config.newStart || null,
                     response => response.response.text()
-                        .then(text => {
+                        .then((text) => {
                             // By default only last 150 KB log data is returned in the response.
                             const maxLength = 150000;
                             const contentLength = Number(response.response.headers.get('X-Text-Size'));
@@ -773,7 +772,7 @@ export const actions = {
                                 type: ACTION_TYPES.SET_LOGS,
                             });
                         }),
-                    (error) => console.error('error', error) // eslint-disable-line no-console
+                    error => console.error('error', error) // eslint-disable-line no-console
                 );
             }
             return null;
@@ -794,7 +793,7 @@ export const actions = {
     },
 
     resetTestDetails() {
-        return (dispatch) =>
+        return dispatch =>
             dispatch({
                 type: ACTION_TYPES.SET_TEST_RESULTS,
                 payload: null,

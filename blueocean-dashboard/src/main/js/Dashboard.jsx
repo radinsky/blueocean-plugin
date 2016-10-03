@@ -1,8 +1,8 @@
 import * as sse from '@jenkins-cd/sse-gateway';
 import React, { Component, PropTypes } from 'react';
 import { UrlConfig } from '@jenkins-cd/blueocean-core-js';
-const { object, node } = PropTypes;
 
+const { shape, node } = PropTypes;
 
 // Connect to the SSE Gateway and allocate a
 // dispatcher for blueocean.
@@ -33,14 +33,14 @@ class Dashboard extends Component {
 }
 
 Dashboard.propTypes = {
-    params: object, // From react-router
+    params: shape, // From react-router
     children: node, // From react-router
-    location: object, // From react-router
+    location: shape, // From react-router
 };
 
 Dashboard.childContextTypes = {
-    params: object, // From react-router
-    location: object, // From react-router
+    params: shape, // From react-router
+    location: shape, // From react-router
 };
 
 export default Dashboard;

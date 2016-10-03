@@ -13,17 +13,8 @@ import React, { Component } from 'react';
  * } *
  * @param ComposedComponent
  */
-export const documentTitle = ComposedComponent => class extends Component {
+const documentTitle = ComposedComponent => class extends Component {
 
-    /**
-     * Set the title of the document
-     * @param title {String}
-     */
-    setTitle(title) {
-        if (document) {
-            document.title = title;
-        }
-    }
     render() {
         // create a composedComponent and inject the functions we want to expose
         return (<ComposedComponent
@@ -33,3 +24,14 @@ export const documentTitle = ComposedComponent => class extends Component {
         />);
     }
 };
+/**
+ * Set the title of the document
+ * @param title {String}
+ */
+documentTitle.setTitle = function setTitle(title) {
+    if (document) {
+        document.title = title;
+    }
+};
+
+export default documentTitle;

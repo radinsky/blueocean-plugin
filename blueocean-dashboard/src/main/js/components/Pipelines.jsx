@@ -1,13 +1,13 @@
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
-import PipelineRowItem from './PipelineRowItem';
-import PageLoading from './PageLoading';
 
 import { Page, PageHeader, Table, Title } from '@jenkins-cd/design-language';
 import Extensions from '@jenkins-cd/js-extensions';
-import { documentTitle } from './DocumentTitle';
+import PipelineRowItem from './PipelineRowItem';
+import PageLoading from './PageLoading';
+import documentTitle from './DocumentTitle';
 
-export class Pipelines extends Component {
+class Pipelines extends Component {
 
     componentDidMount() {
         const { organization = 'Jenkins' } = this.context.params;
@@ -37,7 +37,7 @@ export class Pipelines extends Component {
         return (
             <Page>
                 <PageHeader>
-                    {!pipelines || pipelines.$pending && <PageLoading duration={2000} />}
+                    {(!pipelines || pipelines.$pending) && <PageLoading duration={2000} />}
                     <Title>
                         <h1>
                             <Link to="/" className="inverse">Dashboard</Link>
@@ -45,7 +45,7 @@ export class Pipelines extends Component {
                             { organization && orgLink }
                         </h1>
                         <Extensions.Renderer extensionPoint="jenkins.pipeline.create.action">
-                            <a target="_blank" className="btn-secondary inverse" href={newJobUrl}>
+                            <a rel="noopener noreferrer" target="_blank" className="btn-secondary inverse" href={newJobUrl}>
                                 New Pipeline
                             </a>
                         </Extensions.Renderer>
@@ -64,7 +64,7 @@ export class Pipelines extends Component {
                           headers={headers}
                         >
                             { pipelines &&
-                                pipelines.map(pipeline => {
+                                pipelines.map((pipeline) => {
                                     const key = pipeline._links.self.href;
                                     return (
                                         <PipelineRowItem

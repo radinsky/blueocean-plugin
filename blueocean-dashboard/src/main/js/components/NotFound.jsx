@@ -1,6 +1,6 @@
 import React from 'react';
-import Fullscreen from './Fullscreen';
 import { Link } from 'react-router';
+import Fullscreen from './Fullscreen';
 
 /**
  * Simple component to render a fullscreen 404 page

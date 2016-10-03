@@ -3,7 +3,7 @@ import { actionHandlers } from './actions';
 import { State } from '../components/records';
 // we do not expose the root stores
 const adminStore = state => state.adminStore;
-const location = (state) => state.location;
+const location = state => state.location;
 export const previous = createSelector([location], store => store.previous);
 export const current = createSelector([location], store => store.current);
 export const messages = createSelector([adminStore], store => store.messages);

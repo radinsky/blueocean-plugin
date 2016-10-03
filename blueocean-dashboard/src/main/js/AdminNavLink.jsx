@@ -1,7 +1,5 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-export default class AdminNavLink extends Component {
-    render() {
-        return <div></div>;
-    }
+export default function AdminNavLink() {
+    return <div />;
 }

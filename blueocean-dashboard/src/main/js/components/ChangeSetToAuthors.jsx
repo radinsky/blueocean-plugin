@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import ReactDOM from 'react-dom';
 
 export default class ChangeSetToAuthors extends Component {
 
@@ -25,7 +24,7 @@ export default class ChangeSetToAuthors extends Component {
     }
 
     condense() {
-        const domNode = ReactDOM.findDOMNode(this.refs.authorsWrapper); // used to check for overflow
+        const domNode = this.authorsWrapper; // used to check for overflow
         if (domNode && domNode.scrollWidth > domNode.clientWidth) {
             this.setState({ condense: true });
         }
@@ -46,15 +45,15 @@ export default class ChangeSetToAuthors extends Component {
                {nested}
             </a>);
         }
-        return (<div ref="authorsWrapper">
+        return (<div ref={authorsWrapper => this.authorsWrapper = authorsWrapper}>
             {children }
         </div>);
     }
 }
 
-const { array, func } = PropTypes;
+const { arrayOf, func } = PropTypes;
 
 ChangeSetToAuthors.propTypes = {
-    changeSet: array,
+    changeSet: arrayOf,
     onAuthorsClick: func,
 };

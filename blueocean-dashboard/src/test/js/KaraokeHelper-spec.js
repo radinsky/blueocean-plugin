@@ -1,7 +1,7 @@
 
 import { assert } from 'chai';
 
-import {calculateNode } from '../../main/js/util/KaraokeHelper';
+import calculateNode from '../../main/js/util/KaraokeHelper';
 
 
 describe('KaraokeHelper', () => {

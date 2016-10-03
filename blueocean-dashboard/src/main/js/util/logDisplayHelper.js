@@ -15,15 +15,15 @@ export const getNodesInformation = (nodes) => {
   // calculation of information about stages
   // nodes in Runing state
     const runningNodes = nodes
-    .filter((item) => item.state === STATES.RUNNING && (!item.edges || item.edges.length < 2))
-    .map((item) => item.id);
+    .filter(item => item.state === STATES.RUNNING && (!item.edges || item.edges.length < 2))
+    .map(item => item.id);
   // nodes with error result
     const errorNodes = nodes
-    .filter((item) => item.result === RESULTS.FAILURE)
-    .map((item) => item.id);
+    .filter(item => item.result === RESULTS.FAILURE)
+    .map(item => item.id);
   // nodes without information
     const hasResultsForSteps = nodes
-        .filter((item) => item.state === null && item.result === null).length !== nodes.length;
+        .filter(item => item.state === null && item.result === null).length !== nodes.length;
   // principal model mapper
     let wasFocused = false; // we only want one node to be focused if any
     let parallelNodes = [];
@@ -34,7 +34,7 @@ export const getNodesInformation = (nodes) => {
     const error = !(errorNodes.length === 0);
     const model = nodes.map((item, index) => {
         const hasFailingNode = item.edges ? item.edges
-          .filter((itemError) => errorNodes.indexOf(itemError.id) > -1).length > 0 : false;
+          .filter(itemError => errorNodes.indexOf(itemError.id) > -1).length > 0 : false;
         const isFailingNode = errorNodes.indexOf(item.id) > -1;
         const isRunningNode = runningNodes.indexOf(item.id) > -1;
 
@@ -42,7 +42,7 @@ export const getNodesInformation = (nodes) => {
          * are we in a node that indicates that we have parallel nodes?
          */
         if (item.edges && item.edges.length >= 2) {
-            parallelNodes = item.edges.map((itemParallel) => itemParallel.id);
+            parallelNodes = item.edges.map(itemParallel => itemParallel.id);
         }
         // in case we had been in a parallel node before, we will indicate it and remove the id of the parallel array
         const indexParallel = parallelNodes.indexOf(item.id);

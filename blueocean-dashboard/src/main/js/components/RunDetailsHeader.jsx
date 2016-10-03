@@ -3,8 +3,8 @@
 import React, { Component, PropTypes } from 'react';
 import { Icon } from 'react-material-icons-blue';
 import { ReadableDate, LiveStatusIndicator, TimeDuration } from '@jenkins-cd/design-language';
-import ChangeSetToAuthors from './ChangeSetToAuthors';
 import moment from 'moment';
+import ChangeSetToAuthors from './ChangeSetToAuthors';
 
 class RunDetailsHeader extends Component {
     handleAuthorsClick() {
@@ -44,7 +44,9 @@ class RunDetailsHeader extends Component {
         return (
         <div className="pipeline-result">
             <section className="status inverse">
-                <LiveStatusIndicator result={status} startTime={run.startTime}
+                <LiveStatusIndicator
+                  result={status}
+                  startTime={run.startTime}
                   estimatedDuration={run.estimatedDurationInMillis}
                   noBackground
                 />
@@ -77,11 +79,12 @@ class RunDetailsHeader extends Component {
                     </div>
                     <div className="times">
                         <div>
-                            <Icon {...{
-                                size: 20,
-                                icon: 'timelapse',
-                                style: { fill: '#fff' },
-                            }}
+                            <Icon
+                              {...{
+                                  size: 20,
+                                  icon: 'timelapse',
+                                  style: { fill: '#fff' },
+                              }}
                             />
                             <TimeDuration
                               millis={durationMillis}
@@ -90,11 +93,12 @@ class RunDetailsHeader extends Component {
                             />
                         </div>
                         <div>
-                            <Icon {...{
-                                size: 20,
-                                icon: 'access_time',
-                                style: { fill: '#fff' },
-                            }}
+                            <Icon
+                              {...{
+                                  size: 20,
+                                  icon: 'access_time',
+                                  style: { fill: '#fff' },
+                              }}
                             />
                             <ReadableDate date={run.endTime} liveUpdate />
                         </div>
@@ -105,15 +109,14 @@ class RunDetailsHeader extends Component {
     }
 }
 
-const { object, func } = PropTypes;
+const { shape, func } = PropTypes;
 
 RunDetailsHeader.propTypes = {
-    data: object.isRequired,
-    pipeline: object,
-    colors: object,
+    data: shape.isRequired,
+    pipeline: shape,
     onOrganizationClick: func,
     onNameClick: func,
     onAuthorsClick: func,
 };
 
-export { RunDetailsHeader };
+export default RunDetailsHeader;

@@ -6,16 +6,6 @@ import { buildPipelineUrl } from '../util/UrlUtils';
 
 export default class PipelineRowItem extends Component {
 
-    calculateResponse(passing, failing) {
-        let response = '-';
-        if (failing > 0) {
-            response = (`${failing} failing`);
-        } else if (passing > 0) {
-            response = (`${passing} passing`);
-        }
-        return response;
-    }
-
     render() {
         const { pipeline, showOrganization } = this.props;
 
@@ -97,12 +87,22 @@ export default class PipelineRowItem extends Component {
     }
 }
 
+PipelineRowItem.calculateResponse = function calculateResponse(passing, failing) {
+    let response = '-';
+    if (failing > 0) {
+        response = (`${failing} failing`);
+    } else if (passing > 0) {
+        response = (`${passing} passing`);
+    }
+    return response;
+};
+
 PipelineRowItem.propTypes = {
-    pipeline: PropTypes.object.isRequired,
+    pipeline: PropTypes.shape.isRequired,
     showOrganization: PropTypes.bool,
 };
 
 PipelineRowItem.contextTypes = {
-    location: PropTypes.object,
-    store: PropTypes.object,
+    location: PropTypes.shape,
+    store: PropTypes.shape,
 };

@@ -11,7 +11,7 @@ import {
 import PageLoading from './PageLoading';
 import { pipelineBranchesUnsupported } from './PipelinePage';
 
-const { object, array, func, string, any } = PropTypes;
+const { shape, arrayOf, func, string, node } = PropTypes;
 
 const EmptyState = ({ repoName }) => (
     <main>
@@ -40,7 +40,7 @@ const NotSupported = () => (
             Branch builds only work with the <i>Multibranch Pipeline</i> job type.
             This is just one of the many reasons to switch to Jenkins Pipeline.
             </p>
-            <a href="https://jenkins.io/doc/book/pipeline-as-code/" target="_blank">Learn more</a>
+            <a rel="noopener noreferrer" href="https://jenkins.io/doc/book/pipeline-as-code/" target="_blank">Learn more</a>
         </EmptyStateView>
     </main>
 );
@@ -49,7 +49,7 @@ EmptyState.propTypes = {
     repoName: string,
 };
 
-export class MultiBranch extends Component {
+class MultiBranch extends Component {
     componentWillMount() {
         if (this.context.pipeline && this.context.params && !pipelineBranchesUnsupported(this.context.pipeline)) {
             this.props.fetchBranches({
@@ -93,7 +93,8 @@ export class MultiBranch extends Component {
             <main>
                 <article>
                     {branches.$pending && <PageLoading />}
-                    <Table className="multibranch-table fixed"
+                    <Table
+                      className="multibranch-table fixed"
                       headers={headers}
                     >
                         {branches.length > 0 && branches.map((run, index) => {
@@ -118,18 +119,18 @@ export class MultiBranch extends Component {
 }
 
 MultiBranch.contextTypes = {
-    config: object.isRequired,
-    params: object.isRequired,
-    pipeline: object,
+    config: shape.isRequired,
+    params: shape.isRequired,
+    pipeline: shape,
 };
 
 MultiBranch.propTypes = {
-    branches: array,
+    branches: arrayOf,
     fetchBranches: func,
     clearBranchData: func,
-    children: any,
+    children: node,
 };
 
-const selectors = createSelector([branchSelector], (branches) => ({ branches }));
+const selectors = createSelector([branchSelector], branches => ({ branches }));
 
 export default connect(selectors, actions)(MultiBranch);

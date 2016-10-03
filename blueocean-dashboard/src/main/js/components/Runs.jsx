@@ -5,14 +5,13 @@ import {
     from '@jenkins-cd/design-language';
 import { ReplayButton, RunButton } from '@jenkins-cd/blueocean-core-js';
 
-import { MULTIBRANCH_PIPELINE, SIMPLE_PIPELINE } from '../Capabilities';
-
 import Extensions from '@jenkins-cd/js-extensions';
 import moment from 'moment';
+
+import { MULTIBRANCH_PIPELINE, SIMPLE_PIPELINE } from '../Capabilities';
 import { buildRunDetailsUrl } from '../util/UrlUtils';
 import IfCapability from './IfCapability';
 
-const { object, string, any } = PropTypes;
 
 /*
  http://localhost:8080/jenkins/blue/rest/organizations/jenkins/pipelines/PR-demo/runs
@@ -72,7 +71,9 @@ export default class Runs extends Component {
 
         return (<tr key={id} onClick={open} id={`${pipeline}-${id}`} >
             <td>
-                <LiveStatusIndicator result={resultRun} startTime={startTime}
+                <LiveStatusIndicator
+                  result={resultRun}
+                  startTime={startTime}
                   estimatedDuration={estimatedDurationInMillis}
                 />
             </td>
@@ -81,7 +82,10 @@ export default class Runs extends Component {
             <IfCapability className={pipelineClass} capability={MULTIBRANCH_PIPELINE} >
                 <td>{decodeURIComponent(pipeline)}</td>
             </IfCapability>
-            <td>{changeset && changeset.msg || '-'}</td>
+            <td>
+                {changeset && changeset.msg}
+                {!changeset && '-'}
+            </td>
             <td><TimeDuration millis={durationMillis} liveUpdate={running} /></td>
             <td><ReadableDate date={endTime} liveUpdate /></td>
             <td>
@@ -95,16 +99,16 @@ export default class Runs extends Component {
         </tr>);
     }
 }
+const { shape, node } = PropTypes;
 
 Runs.propTypes = {
-    run: PropTypes.object,
-    pipeline: PropTypes.object,
-    result: any.isRequired, // FIXME: create a shape
-    data: string,
-    changeset: object.isRequired,
+    run: shape,
+    pipeline: shape,
+    result: node.isRequired, // FIXME: create a shape
+    changeset: shape.isRequired,
 };
 Runs.contextTypes = {
-    pipeline: object,
-    router: object.isRequired, // From react-router
-    location: object,
+    pipeline: shape,
+    router: shape.isRequired, // From react-router
+    location: shape,
 };

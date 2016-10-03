@@ -12,28 +12,7 @@ import React, { Component } from 'react';
  *
  * @param ComposedComponent
  */
-export const scrollHelper = ComposedComponent => class extends Component {
-    // Find the modal view container and adopt the scrollTop to focus the end
-    scrollBottom() {
-        const nodes = document.getElementsByClassName('content');
-        const element = nodes[0];
-        if (element) {
-            element.scrollTop = element.scrollHeight - element.clientHeight;
-        }
-    }
-
-    // This will scroll to the hash that is selected in the window.location
-    // We assume an element having the id
-    scrollToAnchor() {
-        const anchorName = window.location.hash;
-        if (anchorName) {
-            const anchorElement = document.getElementById(anchorName.replace('#', ''));
-            if (anchorElement) {
-                anchorElement.scrollIntoView();
-            }
-        }
-    }
-
+const scrollHelper = ComposedComponent => class extends Component {
     render() {
         // React needs the timeout to have the dom ready
         const scrollToAnchorTimeOut = (timeout = 1) => setTimeout(() => this.scrollToAnchor(), timeout);
@@ -47,3 +26,26 @@ export const scrollHelper = ComposedComponent => class extends Component {
         />);
     }
 };
+
+// Find the modal view container and adopt the scrollTop to focus the end
+scrollHelper.scrollBottom = function scrollBottom() {
+    const nodes = document.getElementsByClassName('content');
+    const element = nodes[0];
+    if (element) {
+        element.scrollTop = element.scrollHeight - element.clientHeight;
+    }
+};
+
+// This will scroll to the hash that is selected in the window.location
+// We assume an element having the id
+scrollHelper.scrollToAnchor = function scrollToAnchor() {
+    const anchorName = window.location.hash;
+    if (anchorName) {
+        const anchorElement = document.getElementById(anchorName.replace('#', ''));
+        if (anchorElement) {
+            anchorElement.scrollIntoView();
+        }
+    }
+};
+
+export default scrollHelper;

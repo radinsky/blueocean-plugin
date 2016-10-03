@@ -1,10 +1,12 @@
 import React, { Component, PropTypes } from 'react';
+import ReactDOM from 'react-dom';
 import Extensions from '@jenkins-cd/js-extensions';
+import LogConsoleView from './LogConsoleView';
 import * as sse from '@jenkins-cd/sse-gateway';
 import { EmptyStateView } from '@jenkins-cd/design-language';
 import { Icon } from 'react-material-icons-blue';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
-import LogConsoleView from './LogConsoleView';
 import LogToolbar from './LogToolbar';
 import Steps from './Steps';
 import {
@@ -18,17 +20,19 @@ import {
 } from '../redux';
 
 import { calculateLogView, calculateStepsBaseUrl, calculateRunLogURLObject, calculateNodeBaseUrl, calculateFetchAll } from '../util/UrlUtils';
-import calculateNode from '../util/KaraokeHelper';
+import { calculateNode } from '../util/KaraokeHelper';
+
+
+const { string, object, any, func } = PropTypes;
 
 const QueuedState = () => (
     <EmptyStateView tightSpacing>
         <p>
-            <Icon
-              {...{
-                  size: 20,
-                  icon: 'timer',
-                  style: { fill: '#fff' },
-              }}
+            <Icon {...{
+                size: 20,
+                icon: 'timer',
+                style: { fill: '#fff' },
+            }}
             />
             <span className="waiting">Waiting for run to start.</span>
         </p>
@@ -36,9 +40,9 @@ const QueuedState = () => (
 );
 
 // It should really be using capability using /rest/classes API
-const supportsNodes = result => result && result._class === 'io.jenkins.blueocean.rest.impl.pipeline.PipelineRunImpl';
+const supportsNodes = (result) => result && result._class === 'io.jenkins.blueocean.rest.impl.pipeline.PipelineRunImpl';
 
-class RunDetailsPipeline extends Component {
+export class RunDetailsPipeline extends Component {
     constructor(props) {
         super(props);
         // we do not want to follow any builds that are finished
@@ -64,9 +68,9 @@ class RunDetailsPipeline extends Component {
     componentDidMount() {
         const { result } = this.props;
 
-        if (!result.isQueued()) { // FIXME: when https://issues.jenkins-ci.org/browse/JENKINS-37708 is fixed, test whether it breaks karaoke on freestyle
+        if (!result.isQueued()) {// FIXME: when https://issues.jenkins-ci.org/browse/JENKINS-37708 is fixed, test whether it breaks karaoke on freestyle
             // determine scroll area
-            const domNode = this.element;
+            const domNode = ReactDOM.findDOMNode(this.refs.scrollArea);
             // add both listener, one to the scroll area and another to the whole document
             if (domNode) {
                 domNode.addEventListener('wheel', this._onScrollHandler, false);
@@ -109,7 +113,7 @@ class RunDetailsPipeline extends Component {
         if (this.props.result.isQueued()) {
             return;
         }
-        const domNode = this.element;
+        const domNode = ReactDOM.findDOMNode(this.refs.scrollArea);
         this.props.cleanNodePointer();
         clearTimeout(this.timeout);
         if (domNode) {
@@ -147,7 +151,7 @@ class RunDetailsPipeline extends Component {
             // we turn on refetch so we always fetch a new Node result
             const refetch = true;
             switch (jenkinsEvent) {
-            case 'pipeline_step':
+                case 'pipeline_step':
                 {
                     // we are not using an early out for the events since we want to refresh the node if we finished
                     if (this.state.followAlong) { // if we do it means we want karaoke
@@ -171,7 +175,7 @@ class RunDetailsPipeline extends Component {
                     }
                     break;
                 }
-            case 'pipeline_end':
+                case 'pipeline_end':
                 {
                     // get all steps from the current run, we use the nodeKey and remove the last bit
                     const keyArray = this.mergedConfig.nodeKey.split('/');
@@ -188,20 +192,20 @@ class RunDetailsPipeline extends Component {
                     /** we have to check now if all steps have been declared as finished,
                      * if not we will remove them from the cache so we get the final information*/
                     const notFinishedSteps = Object.keys(this.props.steps)
-                        .filter(item => item.indexOf(searchString) !== -1)
-                        .map(step => this.props.steps[step])
-                        .filter(nodeSteps => !nodeSteps.isFinished);
+                        .filter((item) => item.indexOf(searchString) !== -1)
+                        .map((step) => this.props.steps[step])
+                        .filter((nodeSteps) => !nodeSteps.isFinished);
                     /**
                      * we always should have one item in our array which is the last step of the pipeline
-                      */
+                     */
                     if (notFinishedSteps.length >= 1) {
-                        notFinishedSteps.map(step => removeStep(step.nodesBaseUrl));
+                        notFinishedSteps.map((step) => removeStep(step.nodesBaseUrl));
                     }
                     // we always want to refresh if the run has finished
                     fetchNodes({ ...this.mergedConfig, refetch });
                     break;
                 }
-            default:
+                default:
                 {
                     // //console.log(event);
                 }
@@ -223,7 +227,7 @@ class RunDetailsPipeline extends Component {
     isParallel(nodeInfo) {
         // in case we have edges arrays we compare the first edge, if not we know we are not in parallel mode
         return this.mergedConfig.nodeReducer.edges[0] && nodeInfo.edges[0] ?
-            this.mergedConfig.nodeReducer.edges[0].id === nodeInfo.edges[0].id : false;
+        this.mergedConfig.nodeReducer.edges[0].id === nodeInfo.edges[0].id : false;
     }
 
     generateConfig(props) {
@@ -309,7 +313,7 @@ class RunDetailsPipeline extends Component {
         // here we decide what to do next if somebody clicks on a flowNode
         const afterClick = (id) => {
             // get some information about the node the user clicked
-            const nodeInfo = nodes[nodeKey].model.filter(item => item.id === id)[0];
+            const nodeInfo = nodes[nodeKey].model.filter((item) => item.id === id)[0];
             const pathname = location.pathname;
             let newPath;
             // if path ends with pipeline we simply use it
@@ -354,65 +358,91 @@ class RunDetailsPipeline extends Component {
             mergedConfig: this.mergedConfig,
         };
 
+        const items = [];
+        if (hasResultsForSteps && shouldShowLogHeader && !this.mergedConfig.forceLogView) {
+            items.push(<LogToolbar
+                fileName={logGeneral.fileName}
+                url={logGeneral.url}
+                title={title}
+            />);
+        }
+
+        if (hasResultsForSteps && currentSteps && !this.mergedConfig.forceLogView) {
+            items.push(<Steps
+                nodeInformation={currentSteps}
+                followAlong={followAlong}
+                router={router}
+                {...this.props}
+            />);
+        }
+
+        if (!isPipelineQueued && hasResultsForSteps && noSteps && !this.mergedConfig.forceLogView) {
+            items.push(<EmptyStateView tightSpacing>
+                <p>There are no steps.</p>
+            </EmptyStateView>);
+        }
+
+        if (isPipelineQueued && supportsNode) {
+            items.push(<QueuedState />);
+        }
+
+        const transitionDuration = 500;
+
         return (
-            <div ref={element => this.element = element} className={stepScrollAreaClass}>
+            <div ref="scrollArea" className={stepScrollAreaClass}>
                 { (hasResultsForSteps || isPipelineQueued) && nodes && nodes[nodeKey] && !this.mergedConfig.forceLogView && <Extensions.Renderer
-                  extensionPoint="jenkins.pipeline.run.result"
-                  selectedStage={this.mergedConfig.nodeReducer}
-                  callback={afterClick}
-                  nodes={nodes[nodeKey].model}
-                  pipelineName={name}
-                  branchName={isMultiBranch ? params.branch : undefined}
-                  runId={run.id}
-                  run={run}
+                    extensionPoint="jenkins.pipeline.run.result"
+                    selectedStage={this.mergedConfig.nodeReducer}
+                    callback={afterClick}
+                    nodes={nodes[nodeKey].model}
+                    pipelineName={name}
+                    branchName={isMultiBranch ? params.branch : undefined}
+                    runId={run.id}
+                    run={run}
                 />
                 }
-                { hasResultsForSteps && shouldShowLogHeader && !this.mergedConfig.forceLogView &&
-                    <LogToolbar
-                      fileName={logGeneral.fileName}
-                      url={logGeneral.url}
-                      title={title}
-                    />
-                }
-                { hasResultsForSteps && currentSteps && !this.mergedConfig.forceLogView && <Steps
-                  nodeInformation={currentSteps}
-                  followAlong={followAlong}
-                  router={router}
-                  {...this.props}
-                />
-                }
-                { isPipelineQueued && supportsNode && <QueuedState /> }
-                { !isPipelineQueued && hasResultsForSteps && noSteps && !this.mergedConfig.forceLogView && <EmptyStateView tightSpacing>
-                    <p>There are no steps.</p>
-                </EmptyStateView>
-                }
+                <ReactCSSTransitionGroup
+                    transitionName="stepAnimation"
+                    transitionAppear
+                    transitionAppearTimeout={transitionDuration}
+                    transitionEnterTimeout={transitionDuration}
+                    transitionLeaveTimeout={transitionDuration}
+                >
+                    <div key={this.mergedConfig.nodeReducer.id}>
+                        {items}
+                    </div>
+                </ReactCSSTransitionGroup>
                 { ((!hasResultsForSteps && !isPipelineQueued) || !supportsNode || this.mergedConfig.forceLogView) && <LogConsoleView {...logProps} /> }
             </div>
         );
     }
+
 }
 
-const { shape, func } = PropTypes;
-
 RunDetailsPipeline.propTypes = {
-    isMultiBranch: shape,
-    params: shape,
-    result: shape,
+    pipeline: object,
+    isMultiBranch: any,
+    params: object,
+    result: object,
+    fileName: string,
+    url: string,
     fetchNodes: func,
+    setNode: func,
     fetchSteps: func,
     removeStep: func,
     removeLogs: func,
     cleanNodePointer: func,
-    steps: shape,
-    nodes: shape,
+    steps: object,
+    nodes: object,
+    nodeReducer: object,
 };
 
 RunDetailsPipeline.contextTypes = {
-    config: shape.isRequired,
-    params: shape,
-    pipeline: shape,
-    router: shape.isRequired, // From react-router
-    location: shape.isRequired, // From react-router
+    config: object.isRequired,
+    params: object,
+    pipeline: object,
+    router: object.isRequired, // From react-router
+    location: object.isRequired, // From react-router
 };
 
 const selectors = createSelector(

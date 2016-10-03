@@ -1,13 +1,6 @@
 import React, { Component, PropTypes } from 'react';
-import {
-    actions,
-    pipeline as pipelineSelector,
-    connect,
-    createSelector,
-} from '../redux';
 import { Link } from 'react-router';
 import Extensions from '@jenkins-cd/js-extensions';
-import NotFound from './NotFound';
 import {
     Page,
     PageHeader,
@@ -16,9 +9,16 @@ import {
     TabLink,
     WeatherIcon,
 } from '@jenkins-cd/design-language';
+import {
+    actions,
+    pipeline as pipelineSelector,
+    connect,
+    createSelector,
+} from '../redux';
+import NotFound from './NotFound';
 import PageLoading from './PageLoading';
 import { buildOrganizationUrl, buildPipelineUrl } from '../util/UrlUtils';
-import { documentTitle } from './DocumentTitle';
+import documentTitle from './DocumentTitle';
 
 /**
  * returns true if the pipeline is defined and has branchNames
@@ -31,7 +31,7 @@ export function pipelineBranchesUnsupported(pipeline) {
     return false;
 }
 
-export class PipelinePage extends Component {
+class PipelinePage extends Component {
     getChildContext() {
         return {
             pipeline: this.props.pipeline,
@@ -96,24 +96,24 @@ export class PipelinePage extends Component {
 }
 
 PipelinePage.propTypes = {
-    children: PropTypes.any,
+    children: PropTypes.node,
     fetchPipeline: PropTypes.func.isRequired,
-    pipeline: PropTypes.any,
-    params: PropTypes.object,
+    pipeline: PropTypes.shape,
+    params: PropTypes.shape,
     setTitle: PropTypes.func,
 };
 
 PipelinePage.contextTypes = {
-    config: PropTypes.object.isRequired,
-    location: PropTypes.object,
-    store: PropTypes.object,
+    config: PropTypes.shape.isRequired,
+    location: PropTypes.shape,
+    store: PropTypes.shape,
 };
 
 PipelinePage.childContextTypes = {
-    pipeline: PropTypes.any,
+    pipeline: PropTypes.shape,
 };
 
 const selectors = createSelector([pipelineSelector],
-    (pipeline) => ({ pipeline }));
+    pipeline => ({ pipeline }));
 
 export default connect(selectors, actions)(documentTitle(PipelinePage));

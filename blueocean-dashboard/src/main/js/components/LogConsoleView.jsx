@@ -3,7 +3,7 @@ import LogConsole from './LogConsole';
 import LogToolbar from './LogToolbar';
 import { calculateRunLogURLObject } from '../util/UrlUtils';
 
-const { bool, string, object, func } = PropTypes;
+const { bool, string, shape, func } = PropTypes;
 
 export default class LogConsoleView extends Component {
 
@@ -74,11 +74,10 @@ export default class LogConsoleView extends Component {
 }
 
 LogConsoleView.propTypes = {
-    result: object,
-    mergedConfig: object,
+    mergedConfig: shape,
     fetchLog: func,
     followAlong: bool,
     title: string,
     scrollToBottom: bool,
-    logs: object,
+    logs: shape,
 };

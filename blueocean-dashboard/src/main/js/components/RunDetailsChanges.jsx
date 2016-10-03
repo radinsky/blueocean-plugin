@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { CommitHash, EmptyStateView, ReadableDate, Table } from '@jenkins-cd/design-language';
 
-const { object } = PropTypes;
+const { shape } = PropTypes;
 
 const CommitLink = (commit) => {
     if (commit.url) {
@@ -55,5 +55,5 @@ export default class RunDetailsChanges extends Component {
 }
 
 RunDetailsChanges.propTypes = {
-    result: object,
+    result: shape,
 };

@@ -31,11 +31,11 @@ function _findAndUpdate(obj, replacer, visited, path) {
     if (obj instanceof Array || obj instanceof Immutable.Iterable.Indexed) {
         let updated = false;
         let idx = 0;
-        const next = obj.map(curr => { // retains $pager info
+        const next = obj.map((curr) => { // retains $pager info
             path.push(idx);
             const other = _findAndUpdate(curr, replacer, visited, path);
             path.pop();
-            idx++;
+            idx += 1;
             if (other) {
                 updated = other;
                 return other;
@@ -68,19 +68,18 @@ function _findAndUpdate(obj, replacer, visited, path) {
     } else {
         let updated = false;
         let o = obj;
-        for (const k in obj) {
-            if (obj.hasOwnProperty(k)) {
-                path.push(k);
-                const next = _findAndUpdate(o[k], replacer, visited, path);
-                path.pop();
-                if (next) {
-                    debugLog('found replacement for obj: ', o, k, next);
-                    updated = true;
-                    o = Object.assign({}, o);
-                    o[k] = next;
-                }
+        Object.keys(obj).map((k) => {
+            path.push(k);
+            const next = _findAndUpdate(o[k], replacer, visited, path);
+            path.pop();
+            if (next) {
+                debugLog('found replacement for obj: ', o, k, next);
+                updated = true;
+                o = Object.assign({}, o);
+                o[k] = next;
             }
-        }
+            return true;
+        });
         if (updated) {
             debugLog('Updated object at path: ', path, o);
             visited.setReplaced(obj, o);

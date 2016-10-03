@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import * as sse from '@jenkins-cd/sse-gateway';
 import {
     actions,
     allPipelines as allPipelinesSelector,
@@ -7,10 +8,9 @@ import {
     createSelector,
 } from './redux';
 import loadingIndicator from './LoadingIndicator';
-import * as sse from '@jenkins-cd/sse-gateway';
 import * as pushEventUtil from './util/push-event-util';
 
-const { object, array, func, node, string } = PropTypes;
+const { shape, arrayOf, func, node, string } = PropTypes;
 
 class OrganizationPipelines extends Component {
     // FIXME: get rid of context use
@@ -140,8 +140,8 @@ class OrganizationPipelines extends Component {
 }
 
 OrganizationPipelines.contextTypes = {
-    config: object.isRequired,
-    params: object.isRequired,
+    config: shape.isRequired,
+    params: shape.isRequired,
 };
 
 OrganizationPipelines.propTypes = {
@@ -153,15 +153,14 @@ OrganizationPipelines.propTypes = {
     updateBranchState: func.isRequired,
     updateBranchList: func.isRequired,
     organization: string,
-    params: object, // From react-router
+    params: shape, // From react-router
     children: node, // From react-router
-    location: object, // From react-router
-    allPipelines: array,
-    organizationPipelines: array,
+    allPipelines: arrayOf,
+    organizationPipelines: arrayOf,
 };
 
 OrganizationPipelines.childContextTypes = {
-    pipelines: array,
+    pipelines: arrayOf,
 };
 
 const selectors = createSelector([allPipelinesSelector, organizationPipelinesSelector],

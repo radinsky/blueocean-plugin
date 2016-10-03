@@ -8,7 +8,7 @@ const RENDER_CHUNK_SIZE = 500;
 const RERENDER_DELAY = 17;
 
 
-export class LogConsole extends Component {
+class LogConsole extends Component {
 
     constructor(props) {
         super(props);
@@ -149,10 +149,10 @@ export class LogConsole extends Component {
     }
 }
 
-const { array, bool, string, func } = PropTypes;
+const { arrayOf, bool, string, func } = PropTypes;
 LogConsole.propTypes = {
     scrollToBottom: bool, // in case of long logs you can scroll to the bottom
-    logArray: array,
+    logArray: arrayOf,
     scrollToAnchorTimeOut: func,
     scrollBottom: func,
     prefix: string,

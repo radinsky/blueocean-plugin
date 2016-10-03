@@ -1,9 +1,8 @@
+import { Fetch, capabilityAugmenter as augmenter } from '@jenkins-cd/blueocean-core-js';
+import dedupe from './dedupe-calls';
+
 const infoLog = require('debug')('smart-fetch:info');
 const debugLog = require('debug')('smart-fetch:debug');
-import dedupe from './dedupe-calls';
-import { Fetch } from '@jenkins-cd/blueocean-core-js';
-import { capabilityAugmenter as augmenter } from '@jenkins-cd/blueocean-core-js';
-
 /**
  * How many records to fetch by default
  */
@@ -14,7 +13,7 @@ export const defaultPageSize = 25;
  */
 const deepFreeze = (obj) => {
     const propNames = Object.getOwnPropertyNames(obj);
-    for (let idx = 0; idx < propNames.length; idx++) {
+    for (let idx = 0; idx < propNames.length; idx += 1) {
         const prop = obj[propNames[idx]];
         if (prop !== null) {
             if (typeof prop === 'object') {
@@ -28,7 +27,7 @@ const deepFreeze = (obj) => {
 /**
  * Mark with $success flag and freeze the object
  */
-const successAndFreeze = obj => {
+const successAndFreeze = (obj) => {
     const out = obj;
     out.$success = true;
     deepFreeze(out);
@@ -59,7 +58,7 @@ export function fetch(url, options, onData) {
                     debugLog(' -- success: ', url, data);
                     _onData(data);
                 })
-                .catch(err => {
+                .catch((err) => {
                     debugLog(' -- error: ', url, err);
                     _onData({ $failed: err });
                 });
@@ -67,7 +66,7 @@ export function fetch(url, options, onData) {
     // return a fake promise, a thenable
     // so it can be resolved multiple times
     return {
-        then: (fn) => fetch(url, _onData, fn),
+        then: fn => fetch(url, _onData, fn),
     };
 }
 
@@ -155,7 +154,7 @@ class Pager {
                 Object.freeze(outData); // children are already frozen, only shallow freeze here
                 onData(outData);
             })
-            .catch(err => {
+            .catch((err) => {
                 debugLog(' -- error: ', url, err);
                 onData(assignObj(concatenator(this, existingData), { $failed: err }));
             });
