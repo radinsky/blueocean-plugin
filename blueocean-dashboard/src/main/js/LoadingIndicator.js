@@ -48,7 +48,7 @@ export default {
             // stop the loading animation
             clearTimeouts();
             setLoaderClass('complete', 10);
-            timeouts.push(setTimeout(() => {qq
+            timeouts.push(setTimeout(() => {
                 // The Element.classList is a read-only property
                 const classList = document.getElementById('loadbar').classList;
                 if (classList && classList.length && classList.length > 0) {

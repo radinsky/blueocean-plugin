@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { render } from 'react-dom';
 import { Router, Route, Link, useRouterHistory, IndexRedirect } from 'react-router';
-import { createHistory } from 'history';
+import { createBrowserHistory } from 'history';
 
 import { Provider, configureStore, combineReducers} from './redux';
 import rootReducer, { ACTION_TYPES } from './redux/router';
@@ -122,7 +122,7 @@ function startApp(routes, stores) {
     });
 
     // Using this non-default history because it allows us to specify the base url for the app
-    const history = useRouterHistory(createHistory)({
+    const history = useRouterHistory(createBrowserHistory)({
         basename: appURLBase
     });
 

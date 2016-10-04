@@ -23,4 +23,3 @@ const checkMatchingFavoriteUrls = (favoriteUrl, pipelineOrBranchUrl) => {
 };
 
 export default checkMatchingFavoriteUrls;
-q
