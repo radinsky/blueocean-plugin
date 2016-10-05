@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * Resource cache-control filter.
  *
@@ -54,10 +55,13 @@ public final class ResourceCacheControl implements Filter {
     private final List<String> resourcePrefixes = new ArrayList<>();
 
     private ResourceCacheControl() {
+
         // Add paths to resources that we want to set the
-        // cache-control header.
-        addPath(Jenkins.RESOURCE_PATH); // "/static/VERSION" resources - e.g. JDL assets (fonts etc)
-        addPath(Jenkins.getInstance().getAdjuncts("").rootURL);
+        // cache-control header - only when not using mvn hpi:run
+        if (!"true".equals(System.getProperty("hudson.hpi.run"))) {
+            addPath(Jenkins.RESOURCE_PATH); // "/static/VERSION" resources - e.g. JDL assets (fonts etc)
+            addPath(Jenkins.getInstance().getAdjuncts("").rootURL);
+        }
     }
 
     private void addPath(String path) {
