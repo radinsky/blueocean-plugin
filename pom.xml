@@ -308,7 +308,6 @@
                 </systemProperties>
                 <reuseForks>true</reuseForks>
                 <forkCount>${concurrency}</forkCount>
-                <argLine>${argLine}</argLine>
             </configuration>
         </plugin>
     </plugins>
