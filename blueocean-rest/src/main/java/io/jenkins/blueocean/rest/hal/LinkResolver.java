@@ -3,6 +3,8 @@ package io.jenkins.blueocean.rest.hal;
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
 
+import javax.annotation.Nullable;
+
 /**
  *
  * Resolves a {@link Link} for a given model object
@@ -27,6 +29,7 @@ public abstract class LinkResolver implements ExtensionPoint{
         return ExtensionList.lookup(LinkResolver.class);
     }
 
+    @Nullable
     public static Link resolveLink(Object modeObject){
         for(LinkResolver resolver:all()){
             Link link = resolver.resolve(modeObject);

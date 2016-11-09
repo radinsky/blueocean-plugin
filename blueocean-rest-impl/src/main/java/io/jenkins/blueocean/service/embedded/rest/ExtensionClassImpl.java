@@ -1,9 +1,12 @@
 package io.jenkins.blueocean.service.embedded.rest;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import io.jenkins.blueocean.rest.Reachable;
 import io.jenkins.blueocean.rest.annotation.Capability;
 import io.jenkins.blueocean.rest.hal.Link;
 import io.jenkins.blueocean.rest.model.BlueExtensionClass;
+import jenkins.model.Jenkins;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -16,6 +19,14 @@ import java.util.List;
 public class ExtensionClassImpl extends BlueExtensionClass {
     private final Class baseClass;
     private final Reachable parent;
+    private final Supplier<Collection<String>> classesSupplier = Suppliers.memoize(new com.google.common.base.Supplier<Collection<String>>() {
+        @Override
+        public Collection<String> get() {
+            List<String> classes = new ArrayList<>();
+            collectSuperClasses(classes, baseClass);
+            return classes;
+        }
+    });
 
     public ExtensionClassImpl(Class baseClass, Reachable parent) {
         this.baseClass = baseClass;
@@ -24,9 +35,7 @@ public class ExtensionClassImpl extends BlueExtensionClass {
 
     @Override
     public Collection<String> getClasses() {
-        List<String> classes = new ArrayList<>();
-        collectSuperClasses(classes, baseClass);
-        return classes;
+        return classesSupplier.get();
     }
 
     private void collectSuperClasses(List<String> classes, Class base){
