@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.jose4j.jws.AlgorithmIdentifiers.RSA_USING_SHA256;
@@ -145,6 +146,6 @@ public final class JwtAuthenticationToken extends AbstractAuthenticationToken{
 
     @Override
     public GrantedAuthority[] getAuthorities() {
-        return grantedAuthorities;
+        return Arrays.copyOf(grantedAuthorities, grantedAuthorities.length);
     }
 }

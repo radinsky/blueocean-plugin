@@ -46,6 +46,9 @@ public class LogResource{
                 case "text/plain":
                     rsp.setContentType("text/plain;charset=UTF-8");
                     rsp.setStatus(HttpServletResponse.SC_OK);
+                    break;
+                default:
+                    break;
             }
             writeLogs(req, rsp);
         } catch (IOException e) {

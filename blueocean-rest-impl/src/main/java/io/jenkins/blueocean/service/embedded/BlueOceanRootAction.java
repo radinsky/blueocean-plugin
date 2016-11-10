@@ -5,6 +5,7 @@ import com.google.common.hash.Hashing;
 import com.google.inject.Binder;
 import com.google.inject.Inject;
 import com.google.inject.Module;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.model.UnprotectedRootAction;
 import hudson.remoting.Base64;
@@ -26,6 +27,7 @@ import java.util.Random;
  * @author Kohsuke Kawaguchi
  */
 @Extension
+@SuppressFBWarnings(value = "DMI_RANDOM_USED_ONLY_ONCE", justification = "Incorrectly reported")
 public class BlueOceanRootAction implements UnprotectedRootAction, StaplerProxy {
     private static final String URL_BASE="blue";
     private static final Long randomBits = new Random().nextLong();

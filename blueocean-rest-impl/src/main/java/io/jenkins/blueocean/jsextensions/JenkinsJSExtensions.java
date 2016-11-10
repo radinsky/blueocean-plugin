@@ -33,6 +33,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -173,10 +174,10 @@ public class JenkinsJSExtensions implements RootRoutable {
     private static Object mergeObjects(Object incoming) {
         if (incoming instanceof Map) {
             Map m = new HashMap();
-            Map in = (Map)incoming;
-            for (Object key : in.keySet()) {
-                Object value = mergeObjects(in.get(key));
-                m.put(key, value);
+            Map<Object, Object> in = (Map<Object, Object>)incoming;
+            for (Entry entry : in.entrySet()) {
+                Object value = mergeObjects(in.get(entry.getKey()));
+                m.put(entry.getValue(), value);
             }
             return m;
         }

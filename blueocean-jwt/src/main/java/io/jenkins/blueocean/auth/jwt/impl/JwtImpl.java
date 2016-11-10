@@ -117,7 +117,7 @@ public class JwtImpl extends JwtAuthenticationService {
         return "BlueOcean Jwt endpoint";
     }
 
-    public class JwkFactory extends JwkService {
+    public static class JwkFactory extends JwkService {
         private final String keyId;
 
         public JwkFactory(String keyId) {
