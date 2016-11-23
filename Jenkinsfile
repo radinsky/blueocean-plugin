@@ -21,7 +21,7 @@ node {
       } catch(err) {
         currentBuild.result = "FAILURE"
       } finally {
-        step([$class: 'FindBugsPublisher', '**/*/findbugs.xml' ]);
+        step([$class: 'FindBugsPublisher', pattern: '**/findbugsXml.xml', failedTotalAll: '0']);
         sendhipchat()
         deleteDir()
       }
